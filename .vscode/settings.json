@@ -1,0 +1,15 @@
+{
+  "eslint.packageManager": "yarn",
+  "prettier.semi": false,
+  "prettier.singleQuote": true,
+  "prettier.printWidth": 120,
+  "eslint.lintTask.enable": true,
+  "eslint.validate": [
+      "javascript",
+      "javascriptreact"
+    ],
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+    }
+}
