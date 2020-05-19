@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "webpack-dev-server",
     "build": "webpack",
-    "deploy": "webpack && git push heroku master"
+    "deploy": "webpack && firebase deploy --only hosting"
   },
   "husky": {
     "hooks": {
