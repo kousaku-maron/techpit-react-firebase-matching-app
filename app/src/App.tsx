@@ -1,10 +1,14 @@
 import React from 'react'
+import CssBaseline from '@material-ui/core/CssBaseline'
+import { StoreProvider } from './store/StoreProvider'
+import { MainPage } from './components/pages/MainPage'
 
 const App = () => {
   return (
-    <div>
-      <h1>hello world</h1>
-    </div>
+    <StoreProvider>
+      <CssBaseline />
+      <MainPage />
+    </StoreProvider>
   )
 }
 
