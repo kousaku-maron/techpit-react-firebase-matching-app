@@ -1,6 +1,4 @@
-import { useEffect, useCallback } from 'react'
 import firebase, { auth } from '../firebase'
-import { useAuthDispatch } from '../store/hooks'
 
 export const signIn = async (provider: firebase.auth.AuthProvider) => {
   try {
@@ -35,34 +33,4 @@ export const signInWithGoogle = async () => {
   const provider = new firebase.auth.GoogleAuthProvider()
   const result = await signIn(provider)
   return result
-}
-
-export const useAuthEffect = () => {
-  const { setUID } = useAuthDispatch()
-
-  const onSuccess = useCallback(
-    (user: firebase.User | null) => {
-      if (!user) {
-        return setUID(null)
-      }
-
-      setUID(user.uid)
-    },
-    [setUID]
-  )
-
-  const onFailure = useCallback(
-    (error: firebase.auth.Error) => {
-      setUID(null)
-      console.warn(error)
-    },
-    [setUID]
-  )
-
-  useEffect(() => {
-    const unsubscribe = firebase.auth().onAuthStateChanged(onSuccess, onFailure)
-    return () => {
-      unsubscribe()
-    }
-  }, [onFailure, onSuccess])
 }
