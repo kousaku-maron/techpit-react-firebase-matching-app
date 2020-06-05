@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useCallback } from 'react'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
@@ -15,56 +15,28 @@ import MenuItem from '@material-ui/core/MenuItem'
 import Avatar from '@material-ui/core/Avatar'
 import { CreateUser } from '../../entities/user'
 import { createUser } from '../../repositories/user'
+import { useChangeProfileTools } from '../../services/hooks/user'
+
+type GenderItem = 'male' | 'female' | ''
 
 type Props = {
   uid: string
 }
 
-type GenderItem = 'male' | 'female' | ''
-
-export const CreateUserCard = ({ uid }: Props) => {
+export const CreateProfileCard = ({ uid }: Props) => {
   const classes = useStyles()
 
-  const [gender, setGender] = useState<GenderItem>('')
-  const [name, setName] = useState<string>('')
-  const [introduction, setIntroduction] = useState<string>('')
-  const [thumbnailDataURL, setThumbnailDataURL] = useState<string | undefined>(undefined)
-  const [thumbnailData, setThumbnailData] = useState<File | undefined>(undefined)
-
-  const onChangeGender = useCallback((event: React.ChangeEvent<{ value: unknown }>) => {
-    setGender(event.target.value as GenderItem)
-  }, [])
-
-  const onChangeName = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    setName(event.target.value)
-  }, [])
-
-  const onChangeIntroduction = useCallback((event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setIntroduction(event.target.value)
-  }, [])
-
-  const onChangeThumbnail = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!event.target.files) return
-    const file = event.target.files[0]
-    setThumbnailData(file)
-
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        if (!reader.result) {
-          return reject()
-        }
-
-        const result = reader.result.toString()
-        setThumbnailDataURL(result)
-        resolve(result)
-      }
-
-      reader.onerror = () => reject()
-      reader.onabort = () => reject()
-      reader.readAsDataURL(file)
-    })
-  }, [])
+  const {
+    name,
+    gender,
+    introduction,
+    thumbnailData,
+    thumbnailDataURL,
+    onChangeGender,
+    onChangeName,
+    onChangeIntroduction,
+    onChangeThumbnailData,
+  } = useChangeProfileTools()
 
   const onSubmit = useCallback(() => {
     if (!name || !gender || !introduction) {
@@ -89,19 +61,38 @@ export const CreateUserCard = ({ uid }: Props) => {
           <IconButton component="label">
             <Avatar className={classes.avatar} src={thumbnailDataURL} />
             {/* MEMO: アバタークリックでイベントを起こさせたいので非表示 */}
-            <input type="file" accept="image/*" style={{ display: 'none' }} onChange={onChangeThumbnail} />
+            <input
+              type="file"
+              accept="image/*"
+              style={{ display: 'none' }}
+              onChange={(e) => {
+                if (!e.target.files) return
+                onChangeThumbnailData(e.target.files[0])
+              }}
+            />
           </IconButton>
         </div>
 
         <div className={classes.detailContainer}>
           <div className={classes.inputWrapper}>
-            <TextField value={name} onChange={onChangeName} label="ニックネーム" variant="outlined" fullWidth={true} />
+            <TextField
+              value={name}
+              onChange={(e) => onChangeName(e.target.value)}
+              label="ニックネーム"
+              variant="outlined"
+              fullWidth={true}
+            />
           </div>
 
           <div className={classes.inputWrapper}>
             <FormControl variant="outlined" className={classes.formControl}>
               <InputLabel id="gender-label">性別</InputLabel>
-              <Select value={gender} onChange={onChangeGender} labelId="gender-label" label="性別">
+              <Select
+                value={gender}
+                onChange={(e) => onChangeGender(e.target.value as GenderItem)}
+                labelId="gender-label"
+                label="性別"
+              >
                 <MenuItem value="">
                   <em>未選択</em>
                 </MenuItem>
@@ -114,7 +105,7 @@ export const CreateUserCard = ({ uid }: Props) => {
           <div className={classes.inputWrapper}>
             <TextField
               value={introduction}
-              onChange={onChangeIntroduction}
+              onChange={(e) => onChangeIntroduction(e.target.value)}
               label="自己紹介"
               multiline={true}
               rows={4}

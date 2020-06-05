@@ -15,7 +15,7 @@ export type UpdateUser = {
 
 export const buildUser = (data: firebase.firestore.DocumentData) => {
   const user: User = {
-    name: data.user,
+    name: data.name,
     thumbnailURL: data.thumbnailURL,
     gender: data.gender,
     introduction: data.introduction,

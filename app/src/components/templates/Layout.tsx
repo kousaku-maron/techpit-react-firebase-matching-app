@@ -14,9 +14,14 @@ import { signOut } from '../../services/auth'
 
 type Props = {
   user: firebase.User | null
+  items: {
+    label: string
+    value: string
+  }[]
+  onClickItem: (value: string) => void
 }
 
-export const Layout: React.FC<Props> = ({ user, children }) => {
+export const Layout: React.FC<Props> = ({ user, items, onClickItem, children }) => {
   const classes = useStyles()
 
   return (
@@ -44,15 +49,11 @@ export const Layout: React.FC<Props> = ({ user, children }) => {
           <div className={classes.toolbar} />
           <Divider />
           <List>
-            <ListItem>
-              <ListItemText primary="aaa" />
-            </ListItem>
-            <ListItem>
-              <ListItemText primary="bbb" />
-            </ListItem>
-            <ListItem>
-              <ListItemText primary="ccc" />
-            </ListItem>
+            {items.map((item) => (
+              <ListItem key={item.value} button={true} onClick={() => onClickItem(item.value)}>
+                <ListItemText primary={item.label} />
+              </ListItem>
+            ))}
           </List>
         </Drawer>
       </nav>
