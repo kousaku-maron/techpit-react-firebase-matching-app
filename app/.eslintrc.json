@@ -34,6 +34,7 @@
     "semi": ["error", "never"],
     "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }], 
     "@typescript-eslint/no-use-before-define": [0, { "functions": false, "classes": false }],
+    "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/member-delimiter-style": "off",
     "indent": [2, 2, { "SwitchCase": 1 }],

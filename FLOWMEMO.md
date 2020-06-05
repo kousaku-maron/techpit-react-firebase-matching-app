@@ -163,3 +163,10 @@ components/organisms/SignInDialog.tsx
 ```
 components/organisms/Header.tsx
 ```
+
+# プロフィール機能
+- ユーザーのレポジトリ層・hooks作成。
+- `CreateUserCard`作成。
+- `MainPage`のルーティング整備。
+- `ProfileCard`作成。
+- プロフィールのパラメーター操作を`hooks`化
