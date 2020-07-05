@@ -10,7 +10,7 @@ import CardActions from '@material-ui/core/CardActions'
 import TextField from '@material-ui/core/TextField'
 import Avatar from '@material-ui/core/Avatar'
 import { UpdateUser } from '../../entities/user'
-import { updateUser } from '../../repositories/user'
+import { updateUser, getUserRef } from '../../repositories/user'
 import { useUser, useChangeProfileTools } from '../../services/hooks/user'
 
 type Props = {
@@ -68,7 +68,9 @@ export const ProfileCard = ({ uid }: Props) => {
       ...(thumbnailData && { thumbnailData }),
     }
 
-    updateUser(uid, user)
+    const userRef = getUserRef(uid)
+
+    updateUser(userRef, user)
     setIsEdit(false)
   }, [introduction, name, thumbnailData, uid])
 

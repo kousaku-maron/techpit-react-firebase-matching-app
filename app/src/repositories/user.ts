@@ -1,8 +1,12 @@
 import { firestore, storage } from '../firebase'
-import { CreateUser, UpdateUser } from '../entities/user'
+import { CreateUser, UpdateUser, buildUser } from '../entities/user'
 
 const usersRef = firestore.collection('users')
 const thumbnailsRef = storage.ref('thumbnails')
+
+export const getUserRef = (uid: string) => {
+  return usersRef.doc(uid)
+}
 
 const putThumbnailData = async (uid: string, thumbnailData: File) => {
   const thumbnailRef = thumbnailsRef.child(`${uid}/thumbnail01.png`)
@@ -16,12 +20,11 @@ const putThumbnailData = async (uid: string, thumbnailData: File) => {
   })
 }
 
-export const createUser = async (id: string, user: CreateUser) => {
+export const createUser = async (ref: firebase.firestore.DocumentReference, user: CreateUser) => {
   try {
-    const userRef = usersRef.doc(id)
-    const thumbnailURL = user.thumbnailData ? (await putThumbnailData(id, user.thumbnailData)).thumbnailURL : null
+    const thumbnailURL = user.thumbnailData ? (await putThumbnailData(ref.id, user.thumbnailData)).thumbnailURL : null
 
-    await userRef.set({
+    await ref.set({
       name: user.name,
       thumbnailURL,
       gender: user.gender,
@@ -32,17 +35,28 @@ export const createUser = async (id: string, user: CreateUser) => {
   }
 }
 
-export const updateUser = async (id: string, user: UpdateUser) => {
+export const updateUser = async (ref: firebase.firestore.DocumentReference, user: UpdateUser) => {
   try {
-    const userRef = usersRef.doc(id)
-    const thumbnailURL = user.thumbnailData ? (await putThumbnailData(id, user.thumbnailData)).thumbnailURL : null
+    const thumbnailURL = user.thumbnailData ? (await putThumbnailData(ref.id, user.thumbnailData)).thumbnailURL : null
 
-    await userRef.update({
+    await ref.update({
       name: user.name,
       thumbnailURL,
       introduction: user.introduction,
     })
   } catch (e) {
     console.warn(e)
+  }
+}
+
+export const getUsersByGender = async (gender: 'male' | 'female') => {
+  try {
+    const snapshot = await usersRef.where('gender', '==', gender).get()
+    const users = snapshot.docs.map((doc) => buildUser(doc.id, doc.data()))
+
+    return users
+  } catch (e) {
+    console.warn(e)
+    return []
   }
 }

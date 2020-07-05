@@ -14,7 +14,7 @@ import Select from '@material-ui/core/Select'
 import MenuItem from '@material-ui/core/MenuItem'
 import Avatar from '@material-ui/core/Avatar'
 import { CreateUser } from '../../entities/user'
-import { createUser } from '../../repositories/user'
+import { createUser, getUserRef } from '../../repositories/user'
 import { useChangeProfileTools } from '../../services/hooks/user'
 
 type GenderItem = 'male' | 'female' | ''
@@ -50,7 +50,9 @@ export const CreateProfileCard = ({ uid }: Props) => {
       ...(thumbnailData && { thumbnailData }),
     }
 
-    createUser(uid, user)
+    const userRef = getUserRef(uid)
+
+    createUser(userRef, user)
   }, [gender, introduction, name, thumbnailData, uid])
 
   return (
