@@ -170,3 +170,9 @@ components/organisms/Header.tsx
 - `MainPage`のルーティング整備。
 - `ProfileCard`作成。
 - プロフィールのパラメーター操作を`hooks`化
+
+# ルーティング
+- react-router-domを導入。
+- Navigatorを作成。
+- Layoutコンポーネント修正。
+- Pageコンポーネント作成。
