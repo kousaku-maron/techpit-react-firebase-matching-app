@@ -1,4 +1,5 @@
 import React from 'react'
+import { useHistory } from 'react-router-dom'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
@@ -9,20 +10,41 @@ import Divider from '@material-ui/core/Divider'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
+import CircularProgress from '@material-ui/core/CircularProgress'
+import { SignInDialog } from '../organisms/SignInDialog'
 import firebase from '../../firebase'
 import { signOut } from '../../services/auth'
+import { useUser } from '../../services/hooks/user'
+import { CreateProfileCard } from '../organisms/CreateProfileCard'
 
-type Props = {
-  user: firebase.User | null
-  items: {
-    label: string
-    value: string
-  }[]
-  onClickItem: (value: string) => void
+type LayoutProps = {
+  firebaseUser: firebase.User | null
+  loading: boolean
 }
 
-export const Layout: React.FC<Props> = ({ user, items, onClickItem, children }) => {
+type AuthenticatedContentProps = {
+  firebaseUser: firebase.User
+}
+
+const AuthenticatedContent: React.FC<AuthenticatedContentProps> = ({ firebaseUser, children }) => {
+  const { user, loading } = useUser(firebaseUser.uid)
+
+  if (loading) {
+    return <CircularProgress />
+  }
+
+  if (!user) {
+    return <CreateProfileCard uid={firebaseUser.uid} />
+  }
+
+  return <React.Fragment>{children}</React.Fragment>
+}
+
+const NotAuthenticatedContent = () => <CircularProgress />
+
+export const Layout: React.FC<LayoutProps> = ({ firebaseUser, loading, children }) => {
   const classes = useStyles()
+  const history = useHistory()
 
   return (
     <div className={classes.root}>
@@ -31,7 +53,7 @@ export const Layout: React.FC<Props> = ({ user, items, onClickItem, children }) 
           <Typography variant="h6" className={classes.title}>
             Techpit Matching
           </Typography>
-          {user && (
+          {firebaseUser && (
             <Button color="inherit" onClick={signOut}>
               ログアウト
             </Button>
@@ -49,18 +71,29 @@ export const Layout: React.FC<Props> = ({ user, items, onClickItem, children }) 
           <div className={classes.toolbar} />
           <Divider />
           <List>
-            {items.map((item) => (
-              <ListItem key={item.value} button={true} onClick={() => onClickItem(item.value)}>
-                <ListItemText primary={item.label} />
-              </ListItem>
-            ))}
+            <ListItem button={true} onClick={() => history.push('/home')}>
+              <ListItemText primary="ホーム" />
+            </ListItem>
+            <ListItem button={true} onClick={() => history.push('/chat')}>
+              <ListItemText primary="チャット" />
+            </ListItem>
+            <ListItem button={true} onClick={() => history.push('/profile')}>
+              <ListItemText primary="プロフィール" />
+            </ListItem>
           </List>
         </Drawer>
       </nav>
       <main className={classes.content}>
         <div className={classes.toolbar} />
-        <div className={classes.inner}>{children}</div>
+        <div className={classes.inner}>
+          {firebaseUser ? (
+            <AuthenticatedContent firebaseUser={firebaseUser}>{children}</AuthenticatedContent>
+          ) : (
+            <NotAuthenticatedContent />
+          )}
+        </div>
       </main>
+      <SignInDialog open={!loading && !firebaseUser} />
     </div>
   )
 }

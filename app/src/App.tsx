@@ -1,12 +1,12 @@
 import React from 'react'
 import CssBaseline from '@material-ui/core/CssBaseline'
-import { MainPage } from './components/pages/MainPage'
+import Navigator from './Navigator'
 
 const App = () => {
   return (
     <React.Fragment>
       <CssBaseline />
-      <MainPage />
+      <Navigator />
     </React.Fragment>
   )
 }
