@@ -1,16 +1,13 @@
 import React from 'react'
 import { Layout } from '../templates/Layout'
 import { ProfileCard } from '../organisms/ProfileCard'
+import { User } from '../../entities/user'
 
 type Props = {
-  firebaseUser: firebase.User | null
-  loading: boolean
+  firebaseUser: firebase.User
+  user: User
 }
 
-export const ProfilePage = ({ firebaseUser, loading }: Props) => {
-  return (
-    <Layout firebaseUser={firebaseUser} loading={loading}>
-      {firebaseUser && <ProfileCard uid={firebaseUser.uid} />}
-    </Layout>
-  )
+export const ProfilePage = ({ firebaseUser }: Props) => {
+  return <Layout firebaseUser={firebaseUser}>{firebaseUser && <ProfileCard uid={firebaseUser.uid} />}</Layout>
 }

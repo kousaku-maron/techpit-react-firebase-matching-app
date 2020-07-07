@@ -1,15 +1,16 @@
 import React from 'react'
 import Typography from '@material-ui/core/Typography'
 import { Layout } from '../templates/Layout'
+import { User } from '../../entities/user'
 
 type Props = {
-  firebaseUser: firebase.User | null
-  loading: boolean
+  firebaseUser: firebase.User
+  user: User
 }
 
-export const NotFoundPage = ({ firebaseUser, loading }: Props) => {
+export const NotFoundPage = ({ firebaseUser }: Props) => {
   return (
-    <Layout firebaseUser={firebaseUser} loading={loading}>
+    <Layout firebaseUser={firebaseUser}>
       <Typography>404 | Not Found</Typography>
     </Layout>
   )

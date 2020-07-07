@@ -16,7 +16,7 @@ export const useUser = (uid: string) => {
           setLoading(false)
 
           if (!snapshot.exists) return
-          const newUser = buildUser(snapshot.data()!)
+          const newUser = buildUser(snapshot.id, snapshot.data()!)
           setUser(newUser)
         },
         (error) => {

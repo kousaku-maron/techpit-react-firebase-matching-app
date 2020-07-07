@@ -1,11 +1,12 @@
 export type User = {
+  id: string
   name: string
   thumbnailURL: string | null
   gender: 'male' | 'female'
   introduction: string
 }
 
-export type CreateUser = Omit<User, 'thumbnailURL'> & { thumbnailData?: File }
+export type CreateUser = Omit<User, 'id' | 'thumbnailURL'> & { thumbnailData?: File }
 
 export type UpdateUser = {
   name?: string
@@ -13,8 +14,9 @@ export type UpdateUser = {
   introduction?: string
 }
 
-export const buildUser = (data: firebase.firestore.DocumentData) => {
+export const buildUser = (id: string, data: firebase.firestore.DocumentData) => {
   const user: User = {
+    id,
     name: data.name,
     thumbnailURL: data.thumbnailURL,
     gender: data.gender,
