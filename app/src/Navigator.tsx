@@ -1,6 +1,7 @@
 import React from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import { HomePage } from './components/pages/HomePage'
+import { LikedPage } from './components/pages/LikedPage'
 import { ChatPage } from './components/pages/ChatPage'
 import { CreateProfilePage } from './components/pages/CreateProfilePage'
 import { ProfilePage } from './components/pages/ProfilePage'
@@ -26,6 +27,7 @@ const AuthenticatedNavigator = ({ firebaseUser }: { firebaseUser: firebase.User 
       <Switch>
         <Route path="/profile" component={() => <ProfilePage firebaseUser={firebaseUser} user={user} />} />
         <Route path="/chat" component={() => <ChatPage firebaseUser={firebaseUser} user={user} />} />
+        <Route path="/liked" component={() => <LikedPage firebaseUser={firebaseUser} user={user} />} />
         <Route exact path={['/', '/home']} component={() => <HomePage firebaseUser={firebaseUser} user={user} />} />
         <Route path="*" component={() => <NotFoundPage firebaseUser={firebaseUser} user={user} />} />
       </Switch>

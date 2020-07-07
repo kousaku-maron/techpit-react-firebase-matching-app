@@ -184,3 +184,5 @@ components/organisms/Header.tsx
   - レポジトリを作成後、デメリットを説明し、バッチにリファクタリングする。
 - `matching`のサービスにて、`useMatchingTools`を作成。
 - `HomePage`コンポーネント完成。
+- `matching`のサービスにて、`useLikedUserMatchingTools`を作成。
+- `LikedPage`コンポーネント完成。
