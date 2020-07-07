@@ -21,42 +21,29 @@ const putThumbnailData = async (uid: string, thumbnailData: File) => {
 }
 
 export const createUser = async (ref: firebase.firestore.DocumentReference, user: CreateUser) => {
-  try {
-    const thumbnailURL = user.thumbnailData ? (await putThumbnailData(ref.id, user.thumbnailData)).thumbnailURL : null
+  const thumbnailURL = user.thumbnailData ? (await putThumbnailData(ref.id, user.thumbnailData)).thumbnailURL : null
 
-    await ref.set({
-      name: user.name,
-      thumbnailURL,
-      gender: user.gender,
-      introduction: user.introduction,
-    })
-  } catch (e) {
-    console.warn(e)
-  }
+  await ref.set({
+    name: user.name,
+    thumbnailURL,
+    gender: user.gender,
+    introduction: user.introduction,
+  })
 }
 
 export const updateUser = async (ref: firebase.firestore.DocumentReference, user: UpdateUser) => {
-  try {
-    const thumbnailURL = user.thumbnailData ? (await putThumbnailData(ref.id, user.thumbnailData)).thumbnailURL : null
+  const thumbnailURL = user.thumbnailData ? (await putThumbnailData(ref.id, user.thumbnailData)).thumbnailURL : null
 
-    await ref.update({
-      name: user.name,
-      thumbnailURL,
-      introduction: user.introduction,
-    })
-  } catch (e) {
-    console.warn(e)
-  }
+  await ref.update({
+    name: user.name,
+    thumbnailURL,
+    introduction: user.introduction,
+  })
 }
 
 export const getUsersByGender = async (gender: 'male' | 'female') => {
-  try {
-    const snapshot = await usersRef.where('gender', '==', gender).get()
-    const users = snapshot.docs.map((doc) => buildUser(doc.id, doc.data()))
+  const snapshot = await usersRef.where('gender', '==', gender).get()
+  const users = snapshot.docs.map((doc) => buildUser(doc.id, doc.data()))
 
-    return users
-  } catch (e) {
-    console.warn(e)
-    return []
-  }
+  return users
 }
