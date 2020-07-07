@@ -172,7 +172,15 @@ components/organisms/Header.tsx
 - プロフィールのパラメーター操作を`hooks`化
 
 # ルーティング
-- react-router-domを導入。
-- Navigatorを作成。
-- Layoutコンポーネント修正。
-- Pageコンポーネント作成。
+- `react-router-dom`を導入。
+- `Navigator`を作成。
+- `Layout`コンポーネント修正。
+- `XXXPage`コンポーネント作成。
+
+# マッチング機能
+- `SwipeCard`作成。
+- `likeUser`,`likedUser`,`dislikeUser`,`dislikedUser`のレポジトリ作成。
+- `likeUser`,`dislikeUser`のバッチ作成。
+  - レポジトリを作成後、デメリットを説明し、バッチにリファクタリングする。
+- `matching`のサービスにて、`useMatchingTools`を作成。
+- `HomePage`コンポーネント完成。
