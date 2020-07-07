@@ -49,6 +49,9 @@ export const Layout: React.FC<Props> = ({ firebaseUser, children }) => {
             <ListItem button={true} onClick={() => history.push('/home')}>
               <ListItemText primary="ホーム" />
             </ListItem>
+            <ListItem button={true} onClick={() => history.push('/liked')}>
+              <ListItemText primary="相手からのいいね" />
+            </ListItem>
             <ListItem button={true} onClick={() => history.push('/chat')}>
               <ListItemText primary="チャット" />
             </ListItem>
