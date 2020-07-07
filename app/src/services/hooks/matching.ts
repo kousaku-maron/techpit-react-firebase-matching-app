@@ -3,6 +3,7 @@ import { User } from '../../entities/user'
 import { getUsersByGender } from '../../repositories/user'
 import { getLikeUsers } from '../../repositories/likeUser'
 import { getDislikeUsers } from '../../repositories/dislikeUser'
+import { getMatchUsers } from '../../repositories/matchUser'
 import { likeUserBatch } from '../../batches/likeUserBatch'
 import { dislikeUserBatch } from '../../batches/dislikeUserBatch'
 
@@ -24,9 +25,15 @@ export const useMatchingTools = (uid: string, user: User) => {
       const usersTask = getUsersByGender(targetGender)
       const likeUsersTask = getLikeUsers(uid)
       const dislikeUsersTask = getDislikeUsers(uid)
+      const matchUsersTask = getMatchUsers(uid)
 
-      const [users, likedUsers, dislikedUsers] = await Promise.all([usersTask, likeUsersTask, dislikeUsersTask])
-      const swipedUIDs = [...likedUsers, ...dislikedUsers].map(({ ref }) => ref.id)
+      const [users, likedUsers, dislikedUsers, matchUsers] = await Promise.all([
+        usersTask,
+        likeUsersTask,
+        dislikeUsersTask,
+        matchUsersTask,
+      ])
+      const swipedUIDs = [...likedUsers, ...dislikedUsers, ...matchUsers].map(({ ref }) => ref.id)
       const swipeableUsers = users.filter((user) => !swipedUIDs.find((_uid) => _uid === user.id))
 
       setUsers(swipeableUsers)

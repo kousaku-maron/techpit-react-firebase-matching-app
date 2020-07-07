@@ -10,21 +10,13 @@ export const likeUserBatch = async (fromUID: string, toUID: string) => {
     const fromLikedUserRef = getLikedUserRef(fromUID, toUID)
     const snapshot = await trx.get(fromLikedUserRef)
 
-    const fromLikeUserRef = getLikeUserRef(fromUID, toUID)
-    const fromLikeUser: CloneUser = {
-      ref: getUserRef(toUID),
-    }
-
-    trx.set(fromLikeUserRef, fromLikeUser)
-
-    const toLikedUserRef = getLikedUserRef(toUID, fromUID)
-    const toLikedUser: CloneUser = {
-      ref: getUserRef(fromUID),
-    }
-
-    trx.set(toLikedUserRef, toLikedUser)
-
     if (snapshot.exists) {
+      const toLikeUserRef = getLikeUserRef(toUID, fromUID)
+      trx.delete(toLikeUserRef)
+
+      const fromLikedUserRef = getLikedUserRef(fromUID, toUID)
+      trx.delete(fromLikedUserRef)
+
       const fromMatchUserRef = getMatchUserRef(fromUID, toUID)
       const fromMatchUser: CloneUser = {
         ref: getUserRef(toUID),
@@ -43,6 +35,20 @@ export const likeUserBatch = async (fromUID: string, toUID: string) => {
 
       return { matching: true }
     }
+
+    const fromLikeUserRef = getLikeUserRef(fromUID, toUID)
+    const fromLikeUser: CloneUser = {
+      ref: getUserRef(toUID),
+    }
+
+    trx.set(fromLikeUserRef, fromLikeUser)
+
+    const toLikedUserRef = getLikedUserRef(toUID, fromUID)
+    const toLikedUser: CloneUser = {
+      ref: getUserRef(fromUID),
+    }
+
+    trx.set(toLikedUserRef, toLikedUser)
 
     return { matching: false }
   })
