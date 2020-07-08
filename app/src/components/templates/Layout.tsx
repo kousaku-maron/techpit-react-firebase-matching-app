@@ -13,17 +13,20 @@ import ListItemText from '@material-ui/core/ListItemText'
 import firebase from '../../firebase'
 import { signOut } from '../../services/auth'
 
-type Props = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Props<T = any> = {
   firebaseUser?: firebase.User
+  items?: T[]
+  renderItem?: (item: T) => React.ReactElement
 }
 
-export const Layout: React.FC<Props> = ({ firebaseUser, children }) => {
+export const Layout: React.FC<Props> = ({ firebaseUser, items, renderItem, children }) => {
   const classes = useStyles()
   const history = useHistory()
 
   return (
     <div className={classes.root}>
-      <AppBar position="fixed" className={classes.appBar}>
+      <AppBar position="fixed" className={renderItem && items ? classes.appBarWithSubDrawer : classes.appBar}>
         <Toolbar>
           <Typography variant="h6" className={classes.title}>
             Techpit Matching
@@ -60,6 +63,17 @@ export const Layout: React.FC<Props> = ({ firebaseUser, children }) => {
             </ListItem>
           </List>
         </Drawer>
+        <Drawer
+          variant="persistent"
+          open={!!renderItem}
+          classes={{
+            paper: classes.subdrawerPaper,
+          }}
+        >
+          <div className={classes.toolbar} />
+          <Divider />
+          <List>{renderItem && items && items.map((item) => renderItem(item))}</List>
+        </Drawer>
       </nav>
       <main className={classes.content}>
         <div className={classes.toolbar} />
@@ -80,6 +94,10 @@ const useStyles = makeStyles((theme: Theme) =>
       width: `calc(100% - ${drawerWidth}px)`,
       marginLeft: drawerWidth,
     },
+    appBarWithSubDrawer: {
+      width: `calc(100% - ${drawerWidth * 2}px)`,
+      marginLeft: drawerWidth * 2,
+    },
     title: {
       flexGrow: 1,
     },
@@ -88,6 +106,10 @@ const useStyles = makeStyles((theme: Theme) =>
       width: drawerWidth,
     },
     drawerPaper: {
+      width: drawerWidth,
+    },
+    subdrawerPaper: {
+      marginLeft: drawerWidth,
       width: drawerWidth,
     },
     content: {
