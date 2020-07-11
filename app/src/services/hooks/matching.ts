@@ -8,7 +8,7 @@ import { getMatchUsers } from '../../repositories/matchUser'
 import { likeUserBatch } from '../../batches/likeUserBatch'
 import { dislikeUserBatch } from '../../batches/dislikeUserBatch'
 
-export const useMatchingTools = (uid: string, user: User) => {
+export const useMatchingTools = (user: User) => {
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState<boolean>(true)
 
@@ -24,9 +24,9 @@ export const useMatchingTools = (uid: string, user: User) => {
     const task = async () => {
       setLoading(true)
       const usersTask = getUsersByGender(targetGender)
-      const likeUsersTask = getLikeUsers(uid)
-      const dislikeUsersTask = getDislikeUsers(uid)
-      const matchUsersTask = getMatchUsers(uid)
+      const likeUsersTask = getLikeUsers(user.id)
+      const dislikeUsersTask = getDislikeUsers(user.id)
+      const matchUsersTask = getMatchUsers(user.id)
 
       const [users, likeUsers, dislikeUsers, matchUsers] = await Promise.all([
         usersTask,
@@ -41,14 +41,14 @@ export const useMatchingTools = (uid: string, user: User) => {
       setLoading(false)
     }
     task()
-  }, [targetGender, uid])
+  }, [targetGender, user.id])
 
   const onLikeUser = useCallback(
-    async (user: User) => {
-      setUsers((prev) => prev.filter((_user) => _user.id !== user.id))
+    async (likeUser: User) => {
+      setUsers((prev) => prev.filter((_user) => _user.id !== likeUser.id))
 
       try {
-        const { matching } = await likeUserBatch(uid, user.id)
+        const { matching } = await likeUserBatch(user, likeUser)
         if (matching) {
           alert('マッチングしました。')
         }
@@ -57,27 +57,27 @@ export const useMatchingTools = (uid: string, user: User) => {
         alert('ライクに失敗しました。')
       }
     },
-    [uid]
+    [user]
   )
 
   const onDislikeUser = useCallback(
-    async (user: User) => {
-      setUsers((prev) => prev.filter((_user) => _user.id !== user.id))
+    async (dislikeUser: User) => {
+      setUsers((prev) => prev.filter((_user) => _user.id !== dislikeUser.id))
 
       try {
-        await dislikeUserBatch(uid, user.id)
+        await dislikeUserBatch(user, dislikeUser)
       } catch (e) {
         console.warn(e)
         alert('ディスライクに失敗しました。')
       }
     },
-    [uid]
+    [user]
   )
 
   return { users, loading, onLikeUser, onDislikeUser }
 }
 
-export const useLikedUserMatchingTools = (uid: string, user: User) => {
+export const useLikedUserMatchingTools = (user: User) => {
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState<boolean>(true)
 
@@ -93,7 +93,7 @@ export const useLikedUserMatchingTools = (uid: string, user: User) => {
     const task = async () => {
       setLoading(true)
       const usersTask = getUsersByGender(targetGender)
-      const likedUsersTask = getLikedUsers(uid)
+      const likedUsersTask = getLikedUsers(user.id)
 
       const [users, likedUsers] = await Promise.all([usersTask, likedUsersTask])
       const swipeableUIDs = likedUsers.map(({ ref }) => ref.id)
@@ -103,14 +103,14 @@ export const useLikedUserMatchingTools = (uid: string, user: User) => {
       setLoading(false)
     }
     task()
-  }, [targetGender, uid])
+  }, [targetGender, user.id])
 
   const onLikeUser = useCallback(
-    async (user: User) => {
-      setUsers((prev) => prev.filter((_user) => _user.id !== user.id))
+    async (likeUser: User) => {
+      setUsers((prev) => prev.filter((_user) => _user.id !== likeUser.id))
 
       try {
-        const { matching } = await likeUserBatch(uid, user.id)
+        const { matching } = await likeUserBatch(user, likeUser)
         if (matching) {
           alert('マッチングしました。')
         }
@@ -119,21 +119,21 @@ export const useLikedUserMatchingTools = (uid: string, user: User) => {
         alert('ライクに失敗しました。')
       }
     },
-    [uid]
+    [user]
   )
 
   const onDislikeUser = useCallback(
-    async (user: User) => {
-      setUsers((prev) => prev.filter((_user) => _user.id !== user.id))
+    async (dislikeUser: User) => {
+      setUsers((prev) => prev.filter((_user) => _user.id !== dislikeUser.id))
 
       try {
-        await dislikeUserBatch(uid, user.id)
+        await dislikeUserBatch(user, dislikeUser)
       } catch (e) {
         console.warn(e)
         alert('ディスライクに失敗しました。')
       }
     },
-    [uid]
+    [user]
   )
 
   return { users, loading, onLikeUser, onDislikeUser }

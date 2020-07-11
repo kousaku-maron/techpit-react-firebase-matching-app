@@ -17,7 +17,7 @@ type Props = {
 
 export const HomePage = ({ firebaseUser, user }: Props) => {
   const classes = useStyles()
-  const { users, loading, onLikeUser, onDislikeUser } = useMatchingTools(firebaseUser.uid, user)
+  const { users, loading, onLikeUser, onDislikeUser } = useMatchingTools(user)
 
   const onClickLikeUser = useCallback(
     (user: User) => {
@@ -35,36 +35,40 @@ export const HomePage = ({ firebaseUser, user }: Props) => {
 
   return (
     <Layout firebaseUser={firebaseUser}>
-      {loading && <CircularProgress />}
+      {loading ? (
+        <div className={classes.loadingWrapper}>
+          <CircularProgress />
+        </div>
+      ) : (
+        <div className={classes.root}>
+          <div className={classes.cards}>
+            {users.map((user, index) => {
+              if (index === 0) {
+                return (
+                  <div key={user.id} className={classes.cardWrapper}>
+                    <SwipeCard user={user} />
 
-      <div className={classes.root}>
-        <div className={classes.cards}>
-          {users.map((user, index) => {
-            if (index === 0) {
-              return (
-                <div key={user.id} className={classes.cardWrapper}>
-                  <SwipeCard user={user} />
-
-                  <div className={classes.actionContainer}>
-                    <Fab onClick={() => onClickDislikeUser(user)} className={classes.fab}>
-                      <DislikeIcon />
-                    </Fab>
-                    <Fab color="secondary" onClick={() => onClickLikeUser(user)} className={classes.fab}>
-                      <LikeIcon />
-                    </Fab>
+                    <div className={classes.actionContainer}>
+                      <Fab onClick={() => onClickDislikeUser(user)} className={classes.fab}>
+                        <DislikeIcon />
+                      </Fab>
+                      <Fab color="secondary" onClick={() => onClickLikeUser(user)} className={classes.fab}>
+                        <LikeIcon />
+                      </Fab>
+                    </div>
                   </div>
+                )
+              }
+
+              return (
+                <div key={user.id} className={clsx(classes.cardWrapper, classes.hidden)}>
+                  <SwipeCard user={user} />
                 </div>
               )
-            }
-
-            return (
-              <div key={user.id} className={clsx(classes.cardWrapper, classes.hidden)}>
-                <SwipeCard user={user} />
-              </div>
-            )
-          })}
+            })}
+          </div>
         </div>
-      </div>
+      )}
     </Layout>
   )
 }
@@ -76,6 +80,11 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
+    },
+    loadingWrapper: {
+      flex: 1,
+      display: 'flex',
+      justifyContent: 'center',
     },
     cards: {
       position: 'relative',

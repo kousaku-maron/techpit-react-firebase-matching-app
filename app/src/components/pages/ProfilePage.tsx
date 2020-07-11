@@ -9,5 +9,9 @@ type Props = {
 }
 
 export const ProfilePage = ({ firebaseUser }: Props) => {
-  return <Layout firebaseUser={firebaseUser}>{firebaseUser && <ProfileCard uid={firebaseUser.uid} />}</Layout>
+  return (
+    <Layout firebaseUser={firebaseUser}>
+      <ProfileCard uid={firebaseUser.uid} />
+    </Layout>
+  )
 }

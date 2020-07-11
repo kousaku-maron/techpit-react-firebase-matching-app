@@ -1,4 +1,4 @@
-import { firestore, storage } from '../firebase'
+import firebase, { firestore, storage } from '../firebase'
 import { CreateUser, UpdateUser, buildUser } from '../entities/user'
 
 const usersRef = firestore.collection('users')
@@ -28,6 +28,7 @@ export const createUser = async (ref: firebase.firestore.DocumentReference, user
     thumbnailURL,
     gender: user.gender,
     introduction: user.introduction,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
   })
 }
 

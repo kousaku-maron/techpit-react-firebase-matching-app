@@ -1,5 +1,5 @@
 import { firestore } from '../firebase'
-import { CloneUser, buildCloneUser } from '../entities/cloneUser'
+import { CreateCloneUser, buildCloneUser } from '../entities/cloneUser'
 
 const usersRef = firestore.collection('users')
 
@@ -7,7 +7,7 @@ export const getDislikeUserRef = (uid: string, dislikeUID: string) => {
   return usersRef.doc(uid).collection('dislikeUsers').doc(dislikeUID)
 }
 
-export const createDislikeUser = async (ref: firebase.firestore.DocumentReference, user: CloneUser) => {
+export const createDislikeUser = async (ref: firebase.firestore.DocumentReference, user: CreateCloneUser) => {
   await ref.set(user)
 }
 
