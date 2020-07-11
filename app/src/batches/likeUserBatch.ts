@@ -1,4 +1,4 @@
-import { firestore } from '../firebase'
+import firebase, { firestore } from '../firebase'
 import { User } from '../entities/user'
 import { CreateCloneUser } from '../entities/cloneUser'
 import { CreateRoom } from '../entities/room'
@@ -47,7 +47,7 @@ export const likeUserBatch = async (fromUser: User, toUser: User) => {
       const room: CreateRoom = {
         name: `${fromUser.name} x ${toUser.name}`,
       }
-      trx.set(roomRef, room)
+      trx.set(roomRef, { ...room, createdAt: firebase.firestore.FieldValue.serverTimestamp() })
 
       const fromEntryRoomRef = getEntryRoomRef(fromUID, roomRef.id)
       const toEntryRoomRef = getEntryRoomRef(toUID, roomRef.id)

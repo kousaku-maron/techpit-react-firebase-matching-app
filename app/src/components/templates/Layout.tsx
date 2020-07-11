@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
@@ -13,20 +13,25 @@ import ListItemText from '@material-ui/core/ListItemText'
 import firebase from '../../firebase'
 import { signOut } from '../../services/auth'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type Props<T = any> = {
+type Props = {
   firebaseUser?: firebase.User
-  items?: T[]
-  renderItem?: (item: T) => React.ReactElement
 }
 
-export const Layout: React.FC<Props> = ({ firebaseUser, items, renderItem, children }) => {
+export const Layout: React.FC<Props> = ({ firebaseUser, children }) => {
   const classes = useStyles()
   const history = useHistory()
 
+  const pathname = useMemo(() => {
+    if (!history) {
+      return ''
+    }
+
+    return history.location.pathname
+  }, [history])
+
   return (
     <div className={classes.root}>
-      <AppBar position="fixed" className={renderItem && items ? classes.appBarWithSubDrawer : classes.appBar}>
+      <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
           <Typography variant="h6" className={classes.title}>
             Techpit Matching
@@ -38,7 +43,7 @@ export const Layout: React.FC<Props> = ({ firebaseUser, items, renderItem, child
           )}
         </Toolbar>
       </AppBar>
-      <nav className={classes.drawer}>
+      <nav className={classes.nav}>
         <Drawer
           variant="permanent"
           open={true}
@@ -49,30 +54,19 @@ export const Layout: React.FC<Props> = ({ firebaseUser, items, renderItem, child
           <div className={classes.toolbar} />
           <Divider />
           <List>
-            <ListItem button={true} onClick={() => history.push('/home')}>
+            <ListItem button={true} selected={pathname === '/home'} onClick={() => history.push('/home')}>
               <ListItemText primary="ホーム" />
             </ListItem>
-            <ListItem button={true} onClick={() => history.push('/liked')}>
+            <ListItem button={true} selected={pathname === '/liked'} onClick={() => history.push('/liked')}>
               <ListItemText primary="相手からのいいね" />
             </ListItem>
-            <ListItem button={true} onClick={() => history.push('/chat')}>
+            <ListItem button={true} selected={pathname === '/chat'} onClick={() => history.push('/chat')}>
               <ListItemText primary="チャット" />
             </ListItem>
-            <ListItem button={true} onClick={() => history.push('/profile')}>
+            <ListItem button={true} selected={pathname === '/profile'} onClick={() => history.push('/profile')}>
               <ListItemText primary="プロフィール" />
             </ListItem>
           </List>
-        </Drawer>
-        <Drawer
-          variant="persistent"
-          open={!!renderItem}
-          classes={{
-            paper: classes.subdrawerPaper,
-          }}
-        >
-          <div className={classes.toolbar} />
-          <Divider />
-          <List>{renderItem && items && items.map((item) => renderItem(item))}</List>
         </Drawer>
       </nav>
       <main className={classes.content}>
@@ -94,15 +88,11 @@ const useStyles = makeStyles((theme: Theme) =>
       width: `calc(100% - ${drawerWidth}px)`,
       marginLeft: drawerWidth,
     },
-    appBarWithSubDrawer: {
-      width: `calc(100% - ${drawerWidth * 2}px)`,
-      marginLeft: drawerWidth * 2,
-    },
     title: {
       flexGrow: 1,
     },
     toolbar: theme.mixins.toolbar,
-    drawer: {
+    nav: {
       width: drawerWidth,
     },
     drawerPaper: {

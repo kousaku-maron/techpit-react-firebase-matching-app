@@ -5,3 +5,7 @@ const usersRef = firestore.collection('users')
 export const getEntryRoomRef = (uid: string, roomID: string) => {
   return usersRef.doc(uid).collection('entryRooms').doc(roomID)
 }
+
+export const getEntryRoomsRef = (uid: string) => {
+  return usersRef.doc(uid).collection('entryRooms')
+}
