@@ -186,3 +186,9 @@ components/organisms/Header.tsx
 - `HomePage`コンポーネント完成。
 - `matching`のサービスにて、`useLikedUserMatchingTools`を作成。
 - `LikedPage`コンポーネント完成。
+
+# チャット機能
+- `room`,`message`のレポジトリ作成。
+- マッチング時、`room`を作成するようコード修正。
+- `useRooms`,`useRoom`,`useMessages`,`useMessage`あたりを作成。
+- `ChatPage`コンポーネント完成。
