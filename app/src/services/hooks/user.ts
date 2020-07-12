@@ -1,58 +1,46 @@
 import { useState, useEffect, useCallback } from 'react'
-import { firestore } from '../../firebase'
 import { User, buildUser } from '../../entities/user'
+import { getUserRef } from '../../repositories/user'
 
-export const useUser = (uid: string) => {
-  const [user, setUser] = useState<User | null>(null)
-  const [error, setError] = useState<Error | null>(null)
+export const useUser = (uid: string): [User | null, boolean, Error | null] => {
+  const [value, setValue] = useState<User | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<Error | null>(null)
 
   useEffect(() => {
-    const unsubscribe = firestore
-      .collection('users')
-      .doc(uid)
-      .onSnapshot(
-        (snapshot) => {
+    const targetRef = getUserRef(uid)
+    const unsubscribe = targetRef.onSnapshot({
+      next: (snapshot) => {
+        if (!snapshot.exists) {
           setLoading(false)
-
-          if (!snapshot.exists) return
-          const newUser = buildUser(snapshot.id, snapshot.data()!)
-          setUser(newUser)
-        },
-        (error) => {
-          setLoading(false)
-          setError(error)
+          return
         }
-      )
+        const target = buildUser(snapshot.id, snapshot.data()!)
+        setValue(target)
+        setLoading(false)
+      },
+      error: (e) => {
+        setError(e)
+        setLoading(false)
+      },
+    })
 
     return () => {
       unsubscribe()
     }
   }, [uid])
 
-  return { user, error, loading }
+  return [value, loading, error]
 }
 
-type GenderItem = 'male' | 'female' | ''
-
-export const useChangeProfileTools = () => {
-  const [gender, setGender] = useState<GenderItem>('')
-  const [name, setName] = useState<string>('')
-  const [introduction, setIntroduction] = useState<string>('')
+export const useThumbnailTools = (): [
+  File | undefined,
+  string | undefined,
+  (file: File) => Promise<unknown>,
+  (uri: string) => void
+] => {
   const [thumbnailDataURL, setThumbnailDataURL] = useState<string | undefined>(undefined)
   const [thumbnailData, setThumbnailData] = useState<File | undefined>(undefined)
-
-  const onChangeGender = useCallback((value: GenderItem) => {
-    setGender(value)
-  }, [])
-
-  const onChangeName = useCallback((value: string) => {
-    setName(value)
-  }, [])
-
-  const onChangeIntroduction = useCallback((value: string) => {
-    setIntroduction(value)
-  }, [])
 
   const onChangeThumbnailData = useCallback(async (file: File) => {
     setThumbnailData(file)
@@ -79,16 +67,5 @@ export const useChangeProfileTools = () => {
     setThumbnailDataURL(uri)
   }, [])
 
-  return {
-    onChangeGender,
-    onChangeName,
-    onChangeIntroduction,
-    onChangeThumbnailData,
-    onChangeThumbnailDataURL,
-    gender,
-    name,
-    introduction,
-    thumbnailDataURL,
-    thumbnailData,
-  }
+  return [thumbnailData, thumbnailDataURL, onChangeThumbnailData, onChangeThumbnailDataURL]
 }

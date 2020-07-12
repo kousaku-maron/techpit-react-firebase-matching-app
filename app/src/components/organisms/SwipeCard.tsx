@@ -10,7 +10,7 @@ type Props = {
   user: User
 }
 
-export const SwipeCard = ({ user }: Props) => {
+const SwipeCard = ({ user }: Props) => {
   const classes = useStyles()
 
   return (
@@ -54,3 +54,5 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 )
+
+export default SwipeCard

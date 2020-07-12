@@ -1,11 +1,27 @@
 import React from 'react'
+import { createStyles, makeStyles } from '@material-ui/core/styles'
 import CircularProgress from '@material-ui/core/CircularProgress'
-import { Layout } from '../templates/Layout'
 
-export const LoadingPage = () => {
+const LoadingPage = () => {
+  const classes = useStyles()
+
   return (
-    <Layout>
+    <div className={classes.root}>
       <CircularProgress />
-    </Layout>
+    </div>
   )
 }
+
+const useStyles = makeStyles(() =>
+  createStyles({
+    root: {
+      flex: 1,
+      display: 'flex',
+      height: '100vh',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+  })
+)
+
+export default LoadingPage

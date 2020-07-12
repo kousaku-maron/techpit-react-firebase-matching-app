@@ -17,7 +17,7 @@ type Props = {
   firebaseUser?: firebase.User
 }
 
-export const Layout: React.FC<Props> = ({ firebaseUser, children }) => {
+const Layout: React.FC<Props> = ({ firebaseUser, children }) => {
   const classes = useStyles()
   const history = useHistory()
 
@@ -55,10 +55,10 @@ export const Layout: React.FC<Props> = ({ firebaseUser, children }) => {
           <Divider />
           <List>
             <ListItem button={true} selected={pathname === '/home'} onClick={() => history.push('/home')}>
-              <ListItemText primary="ホーム" />
+              <ListItemText primary="おすすめ" />
             </ListItem>
             <ListItem button={true} selected={pathname === '/liked'} onClick={() => history.push('/liked')}>
-              <ListItemText primary="相手からのいいね" />
+              <ListItemText primary="相手から" />
             </ListItem>
             <ListItem button={true} selected={pathname === '/chat'} onClick={() => history.push('/chat')}>
               <ListItemText primary="チャット" />
@@ -113,3 +113,5 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 )
+
+export default Layout

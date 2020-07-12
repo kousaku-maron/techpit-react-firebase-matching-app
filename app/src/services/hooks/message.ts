@@ -4,14 +4,14 @@ import { getMessagesRef, createMessage, getMessageRef } from '../../repositories
 import { buildMessage, Message, CreateMessage } from '../../entities/message'
 import { getUserRef } from '../../repositories/user'
 
-export const useMessages = (roomID: string) => {
+export const useMessages = (roomID: string): [Message[], boolean, Error | null] => {
   const [values, setValues] = useState<Message[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<Error | null>(null)
 
   useEffect(() => {
     const targetsRef = getMessagesRef(roomID).orderBy('createdAt', 'asc')
-    targetsRef.onSnapshot({
+    const unsubscribe = targetsRef.onSnapshot({
       next: (snapshot) => {
         const targets = snapshot.docs.map((doc) => {
           if (doc.metadata.hasPendingWrites) {
@@ -27,13 +27,17 @@ export const useMessages = (roomID: string) => {
         setLoading(false)
       },
     })
+
+    return () => {
+      unsubscribe()
+    }
   }, [roomID])
 
-  return { values, loading, error }
+  return [values, loading, error]
 }
 
-export const useSendMessage = (roomID: string, uid: string) => {
-  const onSendMessage = useCallback(
+export const useSendMessage = (uid: string, roomID: string) => {
+  const sendMessage = useCallback(
     (text: string) => {
       const messageRef = getMessageRef(roomID)
       const writerRef = getUserRef(uid)
@@ -47,5 +51,5 @@ export const useSendMessage = (roomID: string, uid: string) => {
     [roomID, uid]
   )
 
-  return { onSendMessage }
+  return [sendMessage]
 }

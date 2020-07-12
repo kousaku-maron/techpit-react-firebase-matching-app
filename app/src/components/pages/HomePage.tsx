@@ -1,34 +1,45 @@
 import React, { useCallback } from 'react'
 import clsx from 'clsx'
-import { createStyles, makeStyles } from '@material-ui/core/styles'
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
+import Typography from '@material-ui/core/Typography'
 import CircularProgress from '@material-ui/core/CircularProgress'
-import { Layout } from '../templates/Layout'
-import { User } from '../../entities/user'
-import { useMatchingTools } from '../../services/hooks/matching'
-import { SwipeCard } from '../organisms/SwipeCard'
-import { Fab, Theme } from '@material-ui/core'
+import Fab from '@material-ui/core/Fab'
 import DislikeIcon from '@material-ui/icons/Close'
 import LikeIcon from '@material-ui/icons/Favorite'
+import Layout from '../templates/Layout'
+import SwipeCard from '../organisms/SwipeCard'
+import { User } from '../../entities/user'
+import { useMatchingTools } from '../../services/hooks/matching'
 
 type Props = {
   firebaseUser: firebase.User
   user: User
 }
 
-export const HomePage = ({ firebaseUser, user }: Props) => {
+const HomePage = ({ firebaseUser, user }: Props) => {
   const classes = useStyles()
-  const { users, loading, onLikeUser, onDislikeUser } = useMatchingTools(user)
+  const [users, loading, onLikeUser, onDislikeUser] = useMatchingTools(user)
 
   const onClickLikeUser = useCallback(
-    (user: User) => {
-      onLikeUser(user)
+    async (user: User) => {
+      const { matching, error } = await onLikeUser(user)
+      if (matching && !error) {
+        alert('マッチングしました！')
+      }
+
+      if (error) {
+        alert('いいねに失敗しました！')
+      }
     },
     [onLikeUser]
   )
 
   const onClickDislikeUser = useCallback(
-    (user: User) => {
-      onDislikeUser(user)
+    async (user: User) => {
+      const { error } = await onDislikeUser(user)
+      if (error) {
+        alert('スキップに失敗しました！')
+      }
     },
     [onDislikeUser]
   )
@@ -66,6 +77,7 @@ export const HomePage = ({ firebaseUser, user }: Props) => {
                 </div>
               )
             })}
+            {users.length === 0 && <Typography color="textSecondary">おすすめのユーザーはいません</Typography>}
           </div>
         </div>
       )}
@@ -113,3 +125,5 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 )
+
+export default HomePage
