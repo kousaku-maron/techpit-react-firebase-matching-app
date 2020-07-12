@@ -8,16 +8,32 @@ import { getMatchUsers } from '../../repositories/matchUser'
 import { likeUserBatch } from '../../batches/likeUserBatch'
 import { dislikeUserBatch } from '../../batches/dislikeUserBatch'
 
-export const useMatchingTools = (user: User) => {
+export const useMatchingTools = (
+  user: User
+): [
+  User[],
+  boolean,
+  (
+    likeUser: User
+  ) => Promise<{
+    matching: boolean
+    error?: unknown
+  }>,
+  (
+    dislikeUser: User
+  ) => Promise<{
+    error?: unknown
+  }>
+] => {
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState<boolean>(true)
 
   const targetGender = useMemo(() => {
     if (user.gender === 'male') {
       return 'female'
+    } else {
+      return 'male'
     }
-
-    return 'male'
   }, [user.gender])
 
   useEffect(() => {
@@ -49,12 +65,15 @@ export const useMatchingTools = (user: User) => {
 
       try {
         const { matching } = await likeUserBatch(user, likeUser)
+
         if (matching) {
-          alert('マッチングしました。')
+          return { matching: true }
+        } else {
+          return { matching: false }
         }
       } catch (e) {
         console.warn(e)
-        alert('ライクに失敗しました。')
+        return { matching: false, error: e }
       }
     },
     [user]
@@ -66,18 +85,35 @@ export const useMatchingTools = (user: User) => {
 
       try {
         await dislikeUserBatch(user, dislikeUser)
+        return {}
       } catch (e) {
         console.warn(e)
-        alert('ディスライクに失敗しました。')
+        return { error: e }
       }
     },
     [user]
   )
 
-  return { users, loading, onLikeUser, onDislikeUser }
+  return [users, loading, onLikeUser, onDislikeUser]
 }
 
-export const useLikedUserMatchingTools = (user: User) => {
+export const useLikedUserMatchingTools = (
+  user: User
+): [
+  User[],
+  boolean,
+  (
+    likeUser: User
+  ) => Promise<{
+    matching: boolean
+    error?: unknown
+  }>,
+  (
+    dislikeUser: User
+  ) => Promise<{
+    error?: unknown
+  }>
+] => {
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState<boolean>(true)
 
@@ -111,12 +147,15 @@ export const useLikedUserMatchingTools = (user: User) => {
 
       try {
         const { matching } = await likeUserBatch(user, likeUser)
+
         if (matching) {
-          alert('マッチングしました。')
+          return { matching: true }
+        } else {
+          return { matching: false }
         }
       } catch (e) {
         console.warn(e)
-        alert('ライクに失敗しました。')
+        return { matching: false, error: e }
       }
     },
     [user]
@@ -128,13 +167,14 @@ export const useLikedUserMatchingTools = (user: User) => {
 
       try {
         await dislikeUserBatch(user, dislikeUser)
+        return {}
       } catch (e) {
         console.warn(e)
-        alert('ディスライクに失敗しました。')
+        return { error: e }
       }
     },
     [user]
   )
 
-  return { users, loading, onLikeUser, onDislikeUser }
+  return [users, loading, onLikeUser, onDislikeUser]
 }

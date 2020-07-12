@@ -1,14 +1,21 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { createStyles, makeStyles } from '@material-ui/core/styles'
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import CircularProgress from '@material-ui/core/CircularProgress'
-import { Layout } from '../templates/Layout'
+import TextField from '@material-ui/core/TextField'
+import Button from '@material-ui/core/Button'
+import Card from '@material-ui/core/Card'
+import CardContent from '@material-ui/core/CardContent'
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemText from '@material-ui/core/ListItemText'
+import Avatar from '@material-ui/core/Avatar'
+import Layout from '../templates/Layout'
 import { User } from '../../entities/user'
 import { Message } from '../../entities/message'
 import { useRoom } from '../../services/hooks/room'
 import { useEntryRooms } from '../../services/hooks/entryRoom'
 import { useMessages, useSendMessage } from '../../services/hooks/message'
-import { TextField, Button, Theme, Card, CardContent, List, ListItem, ListItemText, Avatar } from '@material-ui/core'
 import { useUser } from '../../services/hooks/user'
 
 type Props = {
@@ -32,11 +39,11 @@ type ChatContentProps = {
 }
 
 const Item = ({ roomID, selected, onClickItem }: ItemProps) => {
-  const { value } = useRoom(roomID)
+  const [room] = useRoom(roomID)
 
   return (
     <ListItem button={true} selected={selected} onClick={() => onClickItem(roomID)}>
-      <ListItemText>{value?.name}</ListItemText>
+      <ListItemText>{room?.name}</ListItemText>
     </ListItem>
   )
 }
@@ -53,7 +60,7 @@ const RightBubble = ({ message }: BubbleProps) => {
 
 const LeftBubble = ({ message }: BubbleProps) => {
   const classes = useStyles()
-  const { user } = useUser(message.writerRef.id)
+  const [user] = useUser(message.writerRef.id)
 
   return (
     <div className={classes.row}>
@@ -71,8 +78,8 @@ const LeftBubble = ({ message }: BubbleProps) => {
 
 const ChatContent = ({ roomID, uid }: ChatContentProps) => {
   const classes = useStyles()
-  const { values, loading } = useMessages(roomID)
-  const { onSendMessage } = useSendMessage(roomID, uid)
+  const [messages, loading] = useMessages(roomID)
+  const [sendMessage] = useSendMessage(uid, roomID)
   const [text, setText] = useState<string>('')
 
   return (
@@ -84,20 +91,20 @@ const ChatContent = ({ roomID, uid }: ChatContentProps) => {
           </div>
         ) : (
           <div>
-            {values.map((value) => {
-              if (value.writerRef.id === uid) {
+            {messages.map((message) => {
+              if (message.writerRef.id === uid) {
                 return (
-                  <div key={value.id} className={classes.rightBubbleContainer}>
-                    <RightBubble message={value} />
+                  <div key={message.id} className={classes.rightBubbleContainer}>
+                    <RightBubble message={message} />
+                  </div>
+                )
+              } else {
+                return (
+                  <div key={message.id} className={classes.leftBubbleContainer}>
+                    <LeftBubble message={message} />
                   </div>
                 )
               }
-
-              return (
-                <div key={value.id} className={classes.leftBubbleContainer}>
-                  <LeftBubble message={value} />
-                </div>
-              )
             })}
 
             <div className={classes.scrollableSpace} />
@@ -111,7 +118,7 @@ const ChatContent = ({ roomID, uid }: ChatContentProps) => {
             color="primary"
             variant="contained"
             onClick={() => {
-              onSendMessage(text)
+              sendMessage(text)
               setText('')
             }}
           >
@@ -123,15 +130,15 @@ const ChatContent = ({ roomID, uid }: ChatContentProps) => {
   )
 }
 
-export const ChatPage = ({ firebaseUser }: Props) => {
+const ChatPage = ({ firebaseUser }: Props) => {
   const classes = useStyles()
-  const { values, loading } = useEntryRooms(firebaseUser.uid)
+  const [entryRooms, loading] = useEntryRooms(firebaseUser.uid)
   const [activeRoomID, setActiveRoomID] = useState<string | null>(null)
 
   useEffect(() => {
-    if (values.length === 0) return
-    setActiveRoomID(values[0].id)
-  }, [values])
+    if (entryRooms.length === 0) return
+    setActiveRoomID(entryRooms[0].id)
+  }, [entryRooms])
 
   const onClickRoom = useCallback((roomID) => {
     setActiveRoomID(roomID)
@@ -150,14 +157,19 @@ export const ChatPage = ({ firebaseUser }: Props) => {
               <Card className={classes.card}>
                 <CardContent>
                   <List>
-                    {values.map((value) => (
+                    {entryRooms.map((entryRoom) => (
                       <Item
-                        key={value.id}
-                        roomID={value.id}
-                        selected={value.id === activeRoomID}
+                        key={entryRoom.id}
+                        roomID={entryRoom.id}
+                        selected={entryRoom.id === activeRoomID}
                         onClickItem={onClickRoom}
                       />
                     ))}
+                    {entryRooms.length === 0 && (
+                      <ListItem>
+                        <ListItemText secondary={'マッチングした相手がいません'} />
+                      </ListItem>
+                    )}
                   </List>
                 </CardContent>
               </Card>
@@ -258,3 +270,5 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 )
+
+export default ChatPage

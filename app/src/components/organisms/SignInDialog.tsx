@@ -14,7 +14,7 @@ type Props = {
   onClose?: () => void
 }
 
-export const SignInDialog = ({ open, onClose }: Props) => {
+const SignInDialog = ({ open, onClose }: Props) => {
   const classes = useStyles()
 
   return (
@@ -75,3 +75,5 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 )
+
+export default SignInDialog

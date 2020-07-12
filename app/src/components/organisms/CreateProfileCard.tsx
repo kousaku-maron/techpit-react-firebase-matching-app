@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useState, useCallback } from 'react'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
@@ -15,28 +15,20 @@ import MenuItem from '@material-ui/core/MenuItem'
 import Avatar from '@material-ui/core/Avatar'
 import { CreateUser } from '../../entities/user'
 import { createUser, getUserRef } from '../../repositories/user'
-import { useChangeProfileTools } from '../../services/hooks/user'
-
-type GenderItem = 'male' | 'female' | ''
+import { useThumbnailTools } from '../../services/hooks/user'
 
 type Props = {
   uid: string
 }
 
-export const CreateProfileCard = ({ uid }: Props) => {
-  const classes = useStyles()
+type Gender = 'male' | 'female' | ''
 
-  const {
-    name,
-    gender,
-    introduction,
-    thumbnailData,
-    thumbnailDataURL,
-    onChangeGender,
-    onChangeName,
-    onChangeIntroduction,
-    onChangeThumbnailData,
-  } = useChangeProfileTools()
+const CreateProfileCard = ({ uid }: Props) => {
+  const classes = useStyles()
+  const [thumbnailData, thumbnailDataURL, onChangeThumbnailData] = useThumbnailTools()
+  const [gender, setGender] = useState<Gender>('')
+  const [name, setName] = useState<string>('')
+  const [introduction, setIntroduction] = useState<string>('')
 
   const onSubmit = useCallback(() => {
     if (!name || !gender || !introduction) {
@@ -79,7 +71,7 @@ export const CreateProfileCard = ({ uid }: Props) => {
           <div className={classes.inputWrapper}>
             <TextField
               value={name}
-              onChange={(e) => onChangeName(e.target.value)}
+              onChange={(e) => setName(e.target.value)}
               label="ニックネーム"
               variant="outlined"
               fullWidth={true}
@@ -91,7 +83,7 @@ export const CreateProfileCard = ({ uid }: Props) => {
               <InputLabel id="gender-label">性別</InputLabel>
               <Select
                 value={gender}
-                onChange={(e) => onChangeGender(e.target.value as GenderItem)}
+                onChange={(e) => setGender(e.target.value as Gender)}
                 labelId="gender-label"
                 label="性別"
               >
@@ -107,7 +99,7 @@ export const CreateProfileCard = ({ uid }: Props) => {
           <div className={classes.inputWrapper}>
             <TextField
               value={introduction}
-              onChange={(e) => onChangeIntroduction(e.target.value)}
+              onChange={(e) => setIntroduction(e.target.value)}
               label="自己紹介"
               multiline={true}
               rows={4}
@@ -158,3 +150,5 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 )
+
+export default CreateProfileCard

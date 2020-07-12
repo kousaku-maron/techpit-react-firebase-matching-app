@@ -11,7 +11,7 @@ import TextField from '@material-ui/core/TextField'
 import Avatar from '@material-ui/core/Avatar'
 import { UpdateUser } from '../../entities/user'
 import { updateUser, getUserRef } from '../../repositories/user'
-import { useUser, useChangeProfileTools } from '../../services/hooks/user'
+import { useUser, useThumbnailTools } from '../../services/hooks/user'
 
 type Props = {
   uid: string
@@ -19,30 +19,29 @@ type Props = {
 
 type GenderLabel = '男性' | '女性' | ''
 
-export const ProfileCard = ({ uid }: Props) => {
+const ProfileCard = ({ uid }: Props) => {
   const classes = useStyles()
-  const { user } = useUser(uid)
-
-  const {
-    name,
-    introduction,
-    thumbnailData,
-    thumbnailDataURL,
-    onChangeName,
-    onChangeIntroduction,
-    onChangeThumbnailData,
-    onChangeThumbnailDataURL,
-  } = useChangeProfileTools()
-
+  const [user] = useUser(uid)
+  const [thumbnailData, thumbnailDataURL, onChangeThumbnailData, onChangeThumbnailDataURL] = useThumbnailTools()
   const [isEdit, setIsEdit] = useState<boolean>(false)
   const [genderLabel, setGenderLabel] = useState<GenderLabel>('')
+  const [name, setName] = useState<string>('')
+  const [introduction, setIntroduction] = useState<string>('')
+
+  const onChangeName = useCallback((value: string) => {
+    setName(value)
+  }, [])
+
+  const onChangeIntroduction = useCallback((value: string) => {
+    setIntroduction(value)
+  }, [])
 
   // MEMO: 現状のUserデータを入れる。
   useEffect(() => {
     if (!user) return
 
-    onChangeName(user.name)
-    onChangeIntroduction(user.introduction)
+    setName(user.name)
+    setIntroduction(user.introduction)
 
     if (user.gender === 'male') {
       setGenderLabel('男性')
@@ -107,7 +106,7 @@ export const ProfileCard = ({ uid }: Props) => {
             {isEdit && (
               <TextField
                 value={name}
-                onChange={(e) => onChangeName(e.target.value)}
+                onChange={(e) => setName(e.target.value)}
                 label="ニックネーム"
                 variant="outlined"
                 fullWidth={true}
@@ -130,7 +129,7 @@ export const ProfileCard = ({ uid }: Props) => {
             {isEdit && (
               <TextField
                 value={introduction}
-                onChange={(e) => onChangeIntroduction(e.target.value)}
+                onChange={(e) => setIntroduction(e.target.value)}
                 label="自己紹介"
                 multiline={true}
                 rows={4}
@@ -194,3 +193,5 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 )
+
+export default ProfileCard

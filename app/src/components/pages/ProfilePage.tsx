@@ -1,6 +1,6 @@
 import React from 'react'
-import { Layout } from '../templates/Layout'
-import { ProfileCard } from '../organisms/ProfileCard'
+import Layout from '../templates/Layout'
+import ProfileCard from '../organisms/ProfileCard'
 import { User } from '../../entities/user'
 
 type Props = {
@@ -8,10 +8,12 @@ type Props = {
   user: User
 }
 
-export const ProfilePage = ({ firebaseUser }: Props) => {
+const ProfilePage = ({ firebaseUser }: Props) => {
   return (
     <Layout firebaseUser={firebaseUser}>
       <ProfileCard uid={firebaseUser.uid} />
     </Layout>
   )
 }
+
+export default ProfilePage
