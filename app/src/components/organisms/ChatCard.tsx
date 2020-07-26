@@ -224,7 +224,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     actionContainer: {
       display: 'flex',
+      alignItems: 'center',
       width: '100%',
+      height: 60,
     },
     loadingWrapper: {
       flex: 1,
@@ -235,6 +237,7 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       justifyContent: 'flex-end',
       width: 120,
+      height: 50,
     },
     thumbnailWrapper: {
       paddingRight: theme.spacing(2),
