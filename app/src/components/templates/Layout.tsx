@@ -54,17 +54,21 @@ const Layout: React.FC<Props> = ({ firebaseUser, children }) => {
           <div className={classes.toolbar} />
           <Divider />
           <List>
-            <ListItem button={true} selected={pathname === '/home'} onClick={() => history.push('/home')}>
+            <ListItem
+              button={true}
+              selected={pathname === '/home' || pathname === '/'}
+              onClick={() => history.push('/home')}
+            >
               <ListItemText primary="おすすめ" />
             </ListItem>
             <ListItem button={true} selected={pathname === '/liked'} onClick={() => history.push('/liked')}>
               <ListItemText primary="相手から" />
             </ListItem>
             <ListItem button={true} selected={pathname === '/chat'} onClick={() => history.push('/chat')}>
-              <ListItemText primary="チャット" />
+              <ListItemText primary="やりとり" />
             </ListItem>
             <ListItem button={true} selected={pathname === '/profile'} onClick={() => history.push('/profile')}>
-              <ListItemText primary="プロフィール" />
+              <ListItemText primary="マイページ" />
             </ListItem>
           </List>
         </Drawer>

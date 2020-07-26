@@ -75,7 +75,7 @@ const ProfileCard = ({ uid }: Props) => {
 
   return (
     <Card className={classes.root}>
-      <CardHeader title="プロフィール編集" />
+      <CardHeader title="マイページ" />
       <CardContent className={classes.content}>
         <div className={classes.avatarContainer}>
           <IconButton component="label">
