@@ -246,6 +246,9 @@ const useStyles = makeStyles((theme: Theme) =>
       paddingBottom: theme.spacing(2),
     },
     rightBubble: {
+      display: 'flex',
+      justifyContent: 'center',
+      minWidth: 60,
       maxWidth: 300,
       padding: theme.spacing(2),
       borderTopLeftRadius: theme.spacing(2),
@@ -263,6 +266,9 @@ const useStyles = makeStyles((theme: Theme) =>
       paddingTop: theme.spacing(2),
     },
     leftBubble: {
+      display: 'flex',
+      justifyContent: 'center',
+      minWidth: 60,
       maxWidth: 300,
       padding: theme.spacing(2),
       borderTopRightRadius: theme.spacing(2),
