@@ -11,6 +11,7 @@ export const useUser = (uid: string): [User | null, boolean, Error | null] => {
     const targetRef = getUserRef(uid)
     const unsubscribe = targetRef.onSnapshot({
       next: (snapshot) => {
+        if (snapshot.metadata.fromCache) return
         if (!snapshot.exists) {
           setLoading(false)
           return

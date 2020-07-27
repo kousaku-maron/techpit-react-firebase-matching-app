@@ -20,6 +20,13 @@ const putThumbnailData = async (uid: string, thumbnailData: File) => {
   })
 }
 
+export const getUser = async (uid: string) => {
+  const userRef = getUserRef(uid)
+  const userSnapshot = await userRef.get()
+  const user = buildUser(userSnapshot.id, userSnapshot.data()!)
+  return user
+}
+
 export const createUser = async (ref: firebase.firestore.DocumentReference, user: CreateUser) => {
   const thumbnailURL = user.thumbnailData ? (await putThumbnailData(ref.id, user.thumbnailData)).thumbnailURL : null
 
@@ -29,6 +36,7 @@ export const createUser = async (ref: firebase.firestore.DocumentReference, user
     gender: user.gender,
     introduction: user.introduction,
     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    isPrepared: false,
   })
 }
 
@@ -40,11 +48,4 @@ export const updateUser = async (ref: firebase.firestore.DocumentReference, user
     thumbnailURL,
     introduction: user.introduction,
   })
-}
-
-export const getUsersByGender = async (gender: 'male' | 'female') => {
-  const snapshot = await usersRef.where('gender', '==', gender).get()
-  const users = snapshot.docs.map((doc) => buildUser(doc.id, doc.data()))
-
-  return users
 }

@@ -1,3 +1,5 @@
+import { firestore } from 'firebase-admin'
+
 export type User = {
   id: string
   name: string
@@ -8,15 +10,7 @@ export type User = {
   isPrepared: boolean
 }
 
-export type CreateUser = Omit<User, 'id' | 'thumbnailURL' | 'createdAt' | 'isPrepared'> & { thumbnailData?: File }
-
-export type UpdateUser = {
-  name?: string
-  thumbnailData?: File
-  introduction?: string
-}
-
-export const buildUser = (id: string, data: firebase.firestore.DocumentData) => {
+export const buildUser = (id: string, data: firestore.DocumentData) => {
   const user: User = {
     id,
     name: data.name,

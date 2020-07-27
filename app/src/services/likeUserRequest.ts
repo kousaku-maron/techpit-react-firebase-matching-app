@@ -10,16 +10,27 @@ import { getMatchUserRef } from '../repositories/matchUser'
 import { getRoomRef } from '../repositories/room'
 import { getEntryRoomRef } from '../repositories/entryRoom'
 import { getParticipateUserRef } from '../repositories/participateUser'
+import { getRecommendUserRef } from '../repositories/recommendUser'
 
-export const likeUserBatch = async (fromUser: User, toUser: User) => {
+export const likeUserRequest = async (fromUser: User, toUser: User) => {
   return firestore.runTransaction(async (trx) => {
     const fromUID = fromUser.id
     const toUID = toUser.id
 
     const fromLikedUserRef = getLikedUserRef(fromUID, toUID)
-    const snapshot = await trx.get(fromLikedUserRef)
+    const fromMatchUserRef = getMatchUserRef(fromUID, toUID)
+    const likedSnapshot = await trx.get(fromLikedUserRef)
+    const matchSnapshot = await trx.get(fromMatchUserRef)
 
-    if (snapshot.exists) {
+    // MEMO: RecommendUser削除処理
+    const fromRecommendUserRef = getRecommendUserRef(fromUID, toUID)
+    trx.delete(fromRecommendUserRef)
+
+    if (matchSnapshot.exists) {
+      return { matching: false }
+    }
+
+    if (likedSnapshot.exists) {
       // MEMO: LikeUser/LikedUser削除処理
       const toLikeUserRef = getLikeUserRef(toUID, fromUID)
       trx.delete(toLikeUserRef)
