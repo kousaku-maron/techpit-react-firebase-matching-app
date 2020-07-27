@@ -7,6 +7,10 @@ export const getLikedUserRef = (uid: string, likedUID: string) => {
   return usersRef.doc(uid).collection('likedUsers').doc(likedUID)
 }
 
+export const getLikedUsersRef = (uid: string) => {
+  return usersRef.doc(uid).collection('likedUsers')
+}
+
 export const createLikedUser = async (ref: firebase.firestore.DocumentReference, user: CreateCloneUser) => {
   await ref.set(user)
 }

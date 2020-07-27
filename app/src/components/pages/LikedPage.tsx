@@ -9,7 +9,7 @@ import LikeIcon from '@material-ui/icons/Favorite'
 import Layout from '../templates/Layout'
 import SwipeCard from '../organisms/SwipeCard'
 import { User } from '../../entities/user'
-import { useLikedUserMatchingTools } from '../../services/hooks/matching'
+import { useLikedUserMatching } from '../../services/hooks/likedUser'
 
 type Props = {
   firebaseUser: firebase.User
@@ -18,7 +18,7 @@ type Props = {
 
 const LikedPage = ({ firebaseUser, user }: Props) => {
   const classes = useStyles()
-  const [users, loading, onLikeUser, onDislikeUser] = useLikedUserMatchingTools(user)
+  const [users, loading, onLikeUser, onDislikeUser] = useLikedUserMatching(user)
 
   const onClickLikeUser = useCallback(
     async (user: User) => {
