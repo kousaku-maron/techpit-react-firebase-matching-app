@@ -25,7 +25,7 @@
     "@material-ui/icons": "^4.9.1",
     "clsx": "^1.1.1",
     "firebase": "^7.14.4",
-    "moment": "^2.27.0",
+    "moment": "^2.29.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-icons": "^3.10.0",
